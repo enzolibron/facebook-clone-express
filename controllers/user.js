@@ -15,7 +15,6 @@ exports.register = async (req, res) => {
       first_name,
       last_name,
       email,
-      username,
       password,
       bYear,
       bMonth,
@@ -25,14 +24,14 @@ exports.register = async (req, res) => {
 
     if (!validateEmail(email)) {
       return res.status(400).json({
-        message: "invalid email address",
+        message: "invalid email address format",
       });
     }
 
     const check = await User.findOne({ email });
     if (check) {
       return res.status(400).json({
-        message: "email address already taken",
+        message: "email address is already taken",
       });
     }
 
@@ -75,9 +74,7 @@ exports.register = async (req, res) => {
       { id: user._id.toString() },
       "30m"
     );
-
     const url = `${process.env.BASE_URL}/activate/${emailVerificationToken}`;
-
     sendVerificationEmail(user.email, user.first_name, url);
 
     const token = generateToken({ id: user._id.toString() }, "7d");
